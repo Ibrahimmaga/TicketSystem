@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketSystem.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TicketSystem.Models;
 
 namespace TicketSystem
 {
@@ -39,10 +40,17 @@ namespace TicketSystem
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
+                
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("MustBeAdmin", p => p.RequireAuthenticatedUser().RequireRole("admin"));
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
